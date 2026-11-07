@@ -4,6 +4,8 @@ $root = Split-Path $PSScriptRoot -Parent
 Set-Location $root
 Start-Transcript -Path (Join-Path $PSScriptRoot 'probar.log') -Force
 $env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')
+$borrar = Join-Path $PSScriptRoot 'borrar.txt'
+if (Test-Path $borrar) { Get-Content $borrar | Where-Object { $_ -and (Test-Path $_) } | ForEach-Object { Remove-Item $_ -Recurse -Force; Write-Host "Borrado: $_" }; Remove-Item $borrar }
 flutter pub get
 if (Select-String -Path pubspec.yaml -Pattern 'build_runner' -Quiet) {
   if (Get-ChildItem -Path lib -Recurse -Filter *.dart | Select-String -Pattern "part '.*\.g\.dart'" -Quiet) {
