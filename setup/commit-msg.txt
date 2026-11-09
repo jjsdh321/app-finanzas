@@ -1,3 +1,3 @@
-feat(domain): entidades y resumen mensual
+feat(domain): reparto del disponible en bolsas
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
