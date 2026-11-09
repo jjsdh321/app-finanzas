@@ -7,11 +7,8 @@ $env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Env
 $borrar = Join-Path $PSScriptRoot 'borrar.txt'
 if (Test-Path $borrar) { Get-Content $borrar | Where-Object { $_ -and (Test-Path $_) } | ForEach-Object { Remove-Item $_ -Recurse -Force; Write-Host "Borrado: $_" }; Remove-Item $borrar }
 flutter pub get
-if (Select-String -Path pubspec.yaml -Pattern 'build_runner' -Quiet) {
-  if (Get-ChildItem -Path lib -Recurse -Filter *.dart | Select-String -Pattern "part '.*\.g\.dart'" -Quiet) {
-    dart run build_runner build --delete-conflicting-outputs
-  }
-}
+$gen = Get-ChildItem -Path lib -Recurse -Filter *.dart | Where-Object { Select-String -Path $_.FullName -Pattern 'part .*\.g\.dart' -Quiet }
+if ($gen) { dart run build_runner build }
 flutter analyze;              $okAnalyze = ($LASTEXITCODE -eq 0)
 flutter test;                 $okTest = ($LASTEXITCODE -eq 0)
 flutter build web --release;  $okWeb = ($LASTEXITCODE -eq 0)
@@ -22,6 +19,7 @@ if ($okAnalyze -and $okTest -and $okWeb -and (Test-Path $msgFile)) {
   git commit -F $msgFile
   Remove-Item $msgFile
   Write-Host 'GUARDADO EN GIT'
+  if (git remote) { git push; Write-Host 'SUBIDO A GITHUB (la web se actualiza en 2-3 minutos)' }
 }
 Stop-Transcript
 if ($okAnalyze -and $okTest -and $okWeb) { Read-Host 'TODO CORRECTO. Pulsa Enter para cerrar' }
