@@ -1,3 +1,3 @@
-feat(domain): dinero en centimos y periodos mensuales
+feat(domain): entidades y resumen mensual
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
